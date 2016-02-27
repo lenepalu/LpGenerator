@@ -11,7 +11,7 @@
             "homepage": "http://www.lenepalu.com/laravel/lp-generator"
         }
     ],
-    "minimum-stability": "stable",
+
     "keywords": [
         "laravel",
         "lenepalu",
