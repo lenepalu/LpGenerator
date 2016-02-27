@@ -163,8 +163,8 @@ You can customize the generator's stub files/templates to achieve your need.
     ```
     'custom_template' => true,
     ```
-3. From the directory **/resources/crud-generator/** you can modify or customize the stub files.
+3. From the directory **/resources/lp-generator/** you can modify or customize the stub files.
 
 ##Author
 
-[Lene Palu] [https://github.com/lenepalu]
+[Lene Palu] (https://github.com/lenepalu)
