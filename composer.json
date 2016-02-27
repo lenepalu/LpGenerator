@@ -1,0 +1,30 @@
+{
+
+    "name": "lenepalu/lp-generator",
+    "description": "Laravel 5.2 lp-crud generator",
+    "type": "laravel",
+    "authors": [
+        {
+            "name": "lenepalu",
+            "email": "lenepalu@yahoo.fr",
+            "homepage": "http://www.lenepalu.com/laravel/lp-generator"
+        }
+    ],
+    "minimum-stability": "dev",
+    "keywords": [
+        "laravel",
+        "lenepalu",
+        "crud generator",
+        "laravel lp generator"
+    ],
+
+    "require": {
+        "php": ">=5.5.9",
+        "illuminate/support": "~5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "LenePalu\\LpGenerator\\": "src/"
+        }
+    }
+}
