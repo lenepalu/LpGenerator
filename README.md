@@ -167,4 +167,4 @@ You can customize the generator's stub files/templates to achieve your need.
 
 ##Author
 
-#Lene Palu# lenepalu@gmail.com
+[Lene Palu] [https://github.com/lenepalu]
