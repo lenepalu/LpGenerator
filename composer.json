@@ -2,7 +2,8 @@
 
     "name": "lenepalu/lp-generator",
     "description": "Laravel 5.2 lp-crud generator",
-    "type": "laravel",
+    "type": "dev",
+    "license": "MIT",
     "authors": [
         {
             "name": "lenepalu",
