@@ -18,6 +18,7 @@ class LpCommand extends Command
                             {name : The name of the Crud.}
                             {--fields= : Fields name for the form & model.}
                             {--route=yes : Include Crud route to routes.php? yes|no.}
+                            {--soft-delete=yes : use softDelete? yes|no.}
                             {--pk=id : The name of the primary key.}
                             {--view-path= : The name of the view path.}
                             {--namespace= : Namespace of the controller.}
@@ -47,7 +48,7 @@ class LpCommand extends Command
     public function handle()
     {
 
-        list($pName,$sName) = $this->ExtractPluralAndSingularFromCrudName($this->argument('name'));
+        list($pName,$sName) = $this->ExtractPluralAndSingularFromName($this->argument('name'));
         $modelName = studly_case($sName);
         $name = $modelName;
         $migrationName = str_slug($pName,'_');
@@ -55,7 +56,7 @@ class LpCommand extends Command
         $viewName = str_slug($pName,'-');
 
         $routeGroup = $this->option('route-group');
-        $routeName = ($routeGroup) ? $routeGroup . '/' . strtolower($name) : strtolower($name);
+        $routeName = ($routeGroup) ? $routeGroup . '/' . $viewName : $viewName;
 
         $controllerNamespace = ($this->option('namespace')) ? $this->option('namespace') . '\\' : '';
 
@@ -113,7 +114,7 @@ class LpCommand extends Command
         }
     }
 
-    protected function ExtractPluralAndSingularFromCrudName($name){
+    public static function ExtractPluralAndSingularFromName($name){
         $pName = '';
         $sName = '';
         $wTab = explode('_' , str_slug(class_basename($name),'_'));

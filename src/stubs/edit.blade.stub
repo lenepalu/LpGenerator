@@ -5,9 +5,9 @@
     <h1>Edit %%modelName%%</h1>
     <hr/>
 
-    {!! Form::model($%%crudNameSingular%%, [
+    {!! Form::model($%%sVarName%%, [
         'method' => 'PATCH',
-        'url' => ['%%routeGroup%%%%crudName%%', $%%crudNameSingular%%->id],
+        'url' => ['%%routeGroup%%%%viewName%%', $%%sVarName%%->id],
         'class' => 'form-horizontal'
     ]) !!}
 

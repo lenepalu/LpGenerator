@@ -13,7 +13,6 @@ class LpControllerCommand extends GeneratorCommand
      */
     protected $signature = 'lp:controller
                             {name : The name of the controller.}
-                            {--crud-name= : The name of the Crud.}
                             {--model-name= : The name of the Model.}
                             {--view-path= : The name of the view path.}
                             {--required-fields= : Required fields for validations.}
@@ -69,8 +68,12 @@ class LpControllerCommand extends GeneratorCommand
         $stub = $this->files->get($this->getStub());
 
         $viewPath = $this->option('view-path') ? $this->option('view-path') . '.' : '';
-        $crudName = strtolower($this->option('crud-name'));
-        $crudNameSingular = str_singular($crudName);
+
+        list($pName,$sName) = LpCommand::ExtractPluralAndSingularFromName($name);
+        $className  = studly_case($sName);
+        $viewName = str_slug($sName,'-');
+        $sVarName = snake_case($sName,'-');
+        $pVarName = snake_case($pName,'-');
         $modelName = $this->option('model-name');
         $routeGroup = ($this->option('route-group')) ? $this->option('route-group') . '/' : '';
 
@@ -79,14 +82,15 @@ class LpControllerCommand extends GeneratorCommand
             $validationRules = "\$this->validate(\$request, " . $this->option('required-fields') . ");\n";
         }
 
-        return $this->replaceNamespace($stub, $name)
+        return $this->replaceNamespace($stub, $className)
             ->replaceViewPath($stub, $viewPath)
-            ->replaceCrudName($stub, $crudName)
-            ->replaceCrudNameSingular($stub, $crudNameSingular)
+            ->replaceSVarName($stub, $sVarName)
+            ->replacePVarName($stub, $pVarName)
+            ->replaceViewName($stub, $viewName)
             ->replaceModelName($stub, $modelName)
             ->replaceRouteGroup($stub, $routeGroup)
             ->replaceValidationRules($stub, $validationRules)
-            ->replaceClass($stub, $name);
+            ->replaceClass($stub, $className);
     }
 
     /**
@@ -109,32 +113,53 @@ class LpControllerCommand extends GeneratorCommand
     /**
      * Replace the crudName for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $crudName
-     *
+     * @param  string $stub
+     * @param $sVarName
      * @return $this
+     * @internal param string $crudName
+     *
      */
-    protected function replaceCrudName(&$stub, $crudName)
+    protected function replaceSVarName(&$stub, $sVarName)
     {
         $stub = str_replace(
-            '{{crudName}}', $crudName, $stub
+            '{{sVarName}}', $sVarName, $stub
         );
 
         return $this;
     }
 
     /**
-     * Replace the crudNameSingular for the given stub.
+     * Replace the crudName for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $crudNameSingular
-     *
+     * @param  string $stub
+     * @param $pVarName
      * @return $this
+     * @internal param string $crudName
+     *
      */
-    protected function replaceCrudNameSingular(&$stub, $crudNameSingular)
+    protected function replacePVarName(&$stub, $pVarName)
     {
         $stub = str_replace(
-            '{{crudNameSingular}}', $crudNameSingular, $stub
+            '{{pVarName}}', $pVarName, $stub
+        );
+
+        return $this;
+    }
+
+
+    /**
+     * Replace the crudNameSingular for the given stub.
+     *
+     * @param  string $stub
+     * @param $viewName
+     * @return $this
+     * @internal param string $crudNameSingular
+     *
+     */
+    protected function replaceViewName(&$stub, $viewName)
+    {
+        $stub = str_replace(
+            '{{viewName}}', $viewName, $stub
         );
 
         return $this;

@@ -14,7 +14,9 @@ class LpMigrationCommand extends GeneratorCommand
     protected $signature = 'lp:migration
                             {name : The name of the migration.}
                             {--schema= : The name of the schema.}
-                            {--pk=id : The name of the primary key.}';
+                            {--pk=id : The name of the primary key.}
+                            {--fk= : The foreign key.}
+                            ';
 
     /**
      * The console command description.
@@ -51,9 +53,10 @@ class LpMigrationCommand extends GeneratorCommand
      */
     protected function getPath($name)
     {
-        $name = str_replace($this->laravel->getNamespace(), '', $name);
-        $datePrefix = date('Y_m_d_His');
 
+        list($pName,$sName) = LpCommand::ExtractPluralAndSingularFromName($name);
+        $name = str_slug($pName,'_');
+        $datePrefix = date('Y_m_d_His');
         return database_path('/migrations/') . $datePrefix . '_create_' . $name . '_table.php';
     }
 
@@ -67,9 +70,9 @@ class LpMigrationCommand extends GeneratorCommand
     protected function buildClass($name)
     {
         $stub = $this->files->get($this->getStub());
-
-        $tableName = $this->argument('name');
-        $className = 'Create' . ucwords($tableName) . 'Table';
+        list($pName,$sName) = LpCommand::ExtractPluralAndSingularFromName($name);
+        $tableName = str_slug($pName,'_');
+        $className = 'Create' . studly_case($pName) . 'Table';
 
         $schema = $this->option('schema');
         $fields = explode(',', $schema);
@@ -80,7 +83,7 @@ class LpMigrationCommand extends GeneratorCommand
             $x = 0;
             foreach ($fields as $field) {
                 $fieldArray = explode(':', $field);
-                $data[$x]['name'] = trim($fieldArray[0]);
+                $data[$x]['name'] = camel_case(trim($fieldArray[0]));
                 $data[$x]['type'] = trim($fieldArray[1]);
                 $x++;
             }

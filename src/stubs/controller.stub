@@ -20,9 +20,9 @@ class DummyClass extends Controller
      */
     public function index()
     {
-        ${{crudName}} = {{modelName}}::paginate(15);
+        ${{pVarName}} = {{modelName}}::paginate(15);
 
-        return view('{{viewPath}}{{crudName}}.index', compact('{{crudName}}'));
+        return view('{{viewPath}}{{viewName}}.index', compact('{{pVarName}}'));
     }
 
     /**
@@ -32,7 +32,7 @@ class DummyClass extends Controller
      */
     public function create()
     {
-        return view('{{viewPath}}{{crudName}}.create');
+        return view('{{viewPath}}{{viewName}}.create');
     }
 
     /**
@@ -47,7 +47,7 @@ class DummyClass extends Controller
 
         Session::flash('flash_message', '{{modelName}} added!');
 
-        return redirect('{{routeGroup}}{{crudName}}');
+        return redirect('{{routeGroup}}{{viewName}}');
     }
 
     /**
@@ -59,9 +59,9 @@ class DummyClass extends Controller
      */
     public function show($id)
     {
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
+        ${{sVarName}} = {{modelName}}::findOrFail($id);
 
-        return view('{{viewPath}}{{crudName}}.show', compact('{{crudNameSingular}}'));
+        return view('{{viewPath}}{{viewName}}.show', compact('{{sVarName}}'));
     }
 
     /**
@@ -73,9 +73,9 @@ class DummyClass extends Controller
      */
     public function edit($id)
     {
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
+        ${{sVarName}} = {{modelName}}::findOrFail($id);
 
-        return view('{{viewPath}}{{crudName}}.edit', compact('{{crudNameSingular}}'));
+        return view('{{viewPath}}{{viewName}}.edit', compact('{{sVarName}}'));
     }
 
     /**
@@ -88,12 +88,12 @@ class DummyClass extends Controller
     public function update($id, Request $request)
     {
         {{validationRules}}
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
-        ${{crudNameSingular}}->update($request->all());
+        ${{sVarName}} = {{modelName}}::findOrFail($id);
+        ${{sVarName}}->update($request->all());
 
         Session::flash('flash_message', '{{modelName}} updated!');
 
-        return redirect('{{routeGroup}}{{crudName}}');
+        return redirect('{{routeGroup}}{{viewName}}');
     }
 
     /**
@@ -109,7 +109,7 @@ class DummyClass extends Controller
 
         Session::flash('flash_message', '{{modelName}} deleted!');
 
-        return redirect('{{routeGroup}}{{crudName}}');
+        return redirect('{{routeGroup}}{{viewName}}');
     }
 
 }

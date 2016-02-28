@@ -63,8 +63,9 @@ class LpModelCommand extends GeneratorCommand
     protected function buildClass($name)
     {
         $stub = $this->files->get($this->getStub());
-
-        $table = $this->option('table') ?: $this->argument('name');
+        list($pName,$sName) = LpCommand::ExtractPluralAndSingularFromName($name);
+        $name = studly_case($sName);
+        $table = $this->option('table') ?: $name;
         $fillable = $this->option('fillable');
 
         return $this->replaceNamespace($stub, $name)

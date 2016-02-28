@@ -84,18 +84,22 @@ class LpViewCommand extends Command
      */
     public function handle()
     {
-        $crudName = $this->argument('name');
-        $crudNameSingular = str_singular($crudName);
-        $crudNameCap = ucwords($crudName);
-        $modelName = ucwords($crudNameSingular);
+        list($pName,$sName) = LpCommand::ExtractPluralAndSingularFromName($this->argument('name'));
+
+        $viewName = str_slug($pName,'-');
+        $pVarName = camel_case($pName);
+        $sVarName = camel_case($sName);
+        $title = ucwords($pName);
+
+        $modelName = studly_case($sName);
         $routeGroup = ($this->option('route-group')) ? $this->option('route-group') . '/' : $this->option('route-group');
 
         $viewDirectory = config('view.paths')[0] . '/';
         if ($this->option('view-path')) {
             $userPath = $this->option('view-path');
-            $path = $viewDirectory . $userPath . '/' . $crudName . '/';
+            $path = $viewDirectory . $userPath . '/' . $viewName . '/';
         } else {
-            $path = $viewDirectory . $crudName . '/';
+            $path = $viewDirectory . $viewName . '/';
         }
 
         if (!File::isDirectory($path)) {
@@ -144,25 +148,25 @@ class LpViewCommand extends Command
         // For index.blade.php file
         $indexFile = $this->viewDirectoryPath . 'index.blade.stub';
         $newIndexFile = $path . 'index.blade.php';
-        $this->BuildViewFile($indexFile,$newIndexFile,$crudName,$crudNameSingular,$crudNameCap,$modelName,$routeGroup,$formFieldsHtml);
+        $this->BuildViewFile($indexFile,$newIndexFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
 
 
         // For create.blade.php file
         $createFile = $this->viewDirectoryPath . 'create.blade.stub';
         $newCreateFile = $path . 'create.blade.php';
-        $this->BuildViewFile($createFile,$newCreateFile,$crudName,$crudNameSingular,$crudNameCap,$modelName,$routeGroup,$formFieldsHtml);
+        $this->BuildViewFile($createFile,$newCreateFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
 
 
         // For edit.blade.php file
         $editFile = $this->viewDirectoryPath . 'edit.blade.stub';
         $newEditFile = $path . 'edit.blade.php';
-        $this->BuildViewFile($editFile,$newEditFile,$crudName,$crudNameSingular,$crudNameCap,$modelName,$routeGroup,$formFieldsHtml);
+        $this->BuildViewFile($editFile,$newEditFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
 
 
         // For show.blade.php file
         $showFile = $this->viewDirectoryPath . 'show.blade.stub';
         $newShowFile = $path . 'show.blade.p$hp';
-        $this->BuildViewFile($showFile,$newShowFile,$crudName,$crudNameSingular,$crudNameCap,$modelName,$routeGroup,$formFieldsHtml);
+        $this->BuildViewFile($showFile,$newShowFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
 
         // For layouts/master.blade.php file
         $layoutsDirPath = base_path('resources/views/layouts/');
@@ -303,13 +307,14 @@ EOD;
         return $this->wrapField($item, sprintf($field, $item['name']));
     }
 
-    protected  function BuildViewFile($stub,$newView,$crudName,$crudNameSingular,$crudNameCap,$modelName,$routeGroup,$formFieldsHtml){
+    protected  function BuildViewFile($stub,$newView,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml){
         if (!File::copy($stub, $newView)) {
             echo "failed to copy $stub...\n";
         } else {
-            File::put($newView, str_replace('%%crudName%%', $crudName, File::get($newView)));
-            File::put($newView, str_replace('%%crudNameSingular%%', $crudNameSingular, File::get($newView)));
-            File::put($newView, str_replace('%%crudNameCap%%', $crudNameCap, File::get($newView)));
+            File::put($newView, str_replace('%%viewName%%', $viewName, File::get($newView)));
+            File::put($newView, str_replace('%%sVarName%%', $sVarName, File::get($newView)));
+            File::put($newView, str_replace('%%pVarName%%', $pVarName, File::get($newView)));
+            File::put($newView, str_replace('%%title%%', $title, File::get($newView)));
             File::put($newView, str_replace('%%modelName%%', $modelName, File::get($newView)));
             File::put($newView, str_replace('%%routeGroup%%', $routeGroup, File::get($newView)));
             File::put($newView, str_replace('%%formFieldsHtml%%', $formFieldsHtml, File::get($newView)));
