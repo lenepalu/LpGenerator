@@ -46,11 +46,13 @@ class LpCommand extends Command
      */
     public function handle()
     {
-        $name = $this->argument('name');
-        $modelName = ucfirst(str_singular($name));
-        $migrationName = Str::plural(Str::snake(class_basename($name)));
+
+        list($pName,$sName) = $this->ExtractPluralAndSingularFromCrudName($this->argument('name'));
+        $modelName = studly_case($sName);
+        $name = $modelName;
+        $migrationName = str_slug($pName,'_');
         $tableName = $migrationName;
-        $viewName = strtolower($name);
+        $viewName = str_slug($pName,'-');
 
         $routeGroup = $this->option('route-group');
         $routeName = ($routeGroup) ? $routeGroup . '/' . strtolower($name) : strtolower($name);
@@ -62,7 +64,7 @@ class LpCommand extends Command
         $viewPath = $this->option('view-path');
 
         $fieldsArray = explode(',', $fields);
-        //$requiredFields = '';
+
         $requiredFieldsStr = '';
 
         foreach ($fieldsArray as $item) {
@@ -110,5 +112,19 @@ class LpCommand extends Command
             }
         }
     }
+
+    protected function ExtractPluralAndSingularFromCrudName($name){
+        $pName = '';
+        $sName = '';
+        $wTab = explode('_' , str_slug(class_basename($name),'_'));
+        foreach($wTab as $w){
+            $pName .= str_plural($w)." ";
+            $sName .= str_singular($w)." ";
+        }
+        $pName = trim($pName,' ');
+        $sName = trim($sName,' ');
+        return [$pName,$sName];
+    }
+
 
 }
