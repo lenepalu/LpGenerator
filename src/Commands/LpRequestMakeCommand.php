@@ -67,7 +67,7 @@ class LpRequestMakeCommand extends GeneratorCommand
     {
         $stub = $this->files->get($this->getStub());
         $roles = $this->option('roles') ?: '';
-        $roles = str_replace(['[', ']', ','], ['', '', ',\n\t\t\t'], $roles);
+        $roles = str_replace(['[', ']', ','], ['', '', ",\n\t\t\t"], $roles);
         $stub = str_replace('{{Roles}}', $roles, $stub);
         return $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
     }
