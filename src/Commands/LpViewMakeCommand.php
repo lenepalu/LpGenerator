@@ -1,18 +1,24 @@
 <?php
 
+/**
+ * Created by PhpStorm.
+ * User: LenePalu
+ * Date: 2/29/16
+ * Time: 20:45
+ */
 namespace LenePalu\LpGenerator\Commands;
 
 use File;
 use Illuminate\Console\Command;
 
-class LpViewCommand extends Command
+class LpViewMakeCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'lp:view
+    protected $signature = 'lp:view2
                             {name : The name of the Crud.}
                             {--fields= : The fields name for the form.}
                             {--view-path= : The name of the view path.}
@@ -73,8 +79,8 @@ class LpViewCommand extends Command
         parent::__construct();
 
         $this->viewDirectoryPath = config('lp-generator.custom_template')
-        ? config('lp-generator.path')
-        : __DIR__ . '/../stubs/';
+            ? config('lp-generator.path')
+            : __DIR__ . '/../stubs/';
     }
 
     /**
@@ -84,15 +90,15 @@ class LpViewCommand extends Command
      */
     public function handle()
     {
-        list($pName,$sName) = LpCommand::ExtractPluralAndSingularFromName($this->argument('name'));
+        list($pName, $sName) = LpCrudMakeCommand::ExtractPluralAndSingularFromName($this->argument('name'));
 
-        $viewName = str_slug($pName,'-');
+        $viewName = str_slug($sName, '-');
         $pVarName = camel_case($pName);
         $sVarName = camel_case($sName);
         $title = ucwords($pName);
 
         $modelName = studly_case($sName);
-        $routeGroup = ($this->option('route-group')) ? $this->option('route-group') . '/' : $this->option('route-group');
+        $routeGroup = $this->option('route-group') ? $this->option('route-group') . '/' : $this->option('route-group');
 
         $viewDirectory = config('view.paths')[0] . '/';
         if ($this->option('view-path')) {
@@ -117,7 +123,7 @@ class LpViewCommand extends Command
                 $itemArray = explode(':', $item);
                 $formFields[$x]['name'] = trim($itemArray[0]);
                 $formFields[$x]['type'] = trim($itemArray[1]);
-                $formFields[$x]['required'] = (isset($itemArray[2]) && (trim($itemArray[2]) == 'req' || trim($itemArray[2]) == 'required')) ? true : false;
+                $formFields[$x]['required'] = (!empty($itemArray[2]) && (trim($itemArray[2]) === 'req' || trim($itemArray[2]) === 'required'));
 
                 $x++;
             }
@@ -139,7 +145,7 @@ class LpViewCommand extends Command
             $field = $value['name'];
             $label = ucwords(str_replace('_', ' ', $field));
             $formHeadingHtml .= '<th>' . $label . '</th>';
-            $formBodyHtml .= '<td>{{ $item->' . $field . ' }}</td>';
+            $formBodyHtml .= '<td>{{ $' . $sVarName . '->' . $field . ' }}</td>';
             $formBodyHtmlForShowView .= '<td> {{ $%%crudNameSingular%%->' . $field . ' }} </td>';
 
             $i++;
@@ -148,25 +154,25 @@ class LpViewCommand extends Command
         // For index.blade.php file
         $indexFile = $this->viewDirectoryPath . 'index.blade.stub';
         $newIndexFile = $path . 'index.blade.php';
-        $this->BuildViewFile($indexFile,$newIndexFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
+        $this->BuildViewFile($indexFile, $newIndexFile, $viewName, $sVarName, $pVarName, $title, $modelName, $routeGroup, $formHeadingHtml, $formBodyHtml, $formFieldsHtml);
 
 
         // For create.blade.php file
         $createFile = $this->viewDirectoryPath . 'create.blade.stub';
         $newCreateFile = $path . 'create.blade.php';
-        $this->BuildViewFile($createFile,$newCreateFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
+        $this->BuildViewFile($createFile, $newCreateFile, $viewName, $sVarName, $pVarName, $title, $modelName, $routeGroup, $formHeadingHtml, $formBodyHtml, $formFieldsHtml);
 
 
         // For edit.blade.php file
         $editFile = $this->viewDirectoryPath . 'edit.blade.stub';
         $newEditFile = $path . 'edit.blade.php';
-        $this->BuildViewFile($editFile,$newEditFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
+        $this->BuildViewFile($editFile, $newEditFile, $viewName, $sVarName, $pVarName, $title, $modelName, $routeGroup, $formHeadingHtml, $formBodyHtml, $formFieldsHtml);
 
 
         // For show.blade.php file
         $showFile = $this->viewDirectoryPath . 'show.blade.stub';
-        $newShowFile = $path . 'show.blade.p$hp';
-        $this->BuildViewFile($showFile,$newShowFile,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml);
+        $newShowFile = $path . 'show.blade.php';
+        $this->BuildViewFile($showFile, $newShowFile, $viewName, $sVarName, $pVarName, $title, $modelName, $routeGroup, $formHeadingHtml, $formBodyHtml, $formFieldsHtml);
 
         // For layouts/master.blade.php file
         $layoutsDirPath = base_path('resources/views/layouts/');
@@ -212,7 +218,7 @@ EOD;
     /**
      * Form field generator.
      *
-     * @param  string  $item
+     * @param  string $item
      *
      * @return string
      */
@@ -237,30 +243,30 @@ EOD;
     /**
      * Create a specific field using the form helper.
      *
-     * @param  string  $item
+     * @param  string $item
      *
      * @return string
      */
     protected function createFormField($item)
     {
-        $required = ($item['required'] === true) ? ", 'required' => 'required'" : "";
+        $required = ($item['required'] === true) ? ", 'required' => 'required'" : '';
 
         return $this->wrapField(
             $item,
-            "{!! Form::" . $this->typeLookup[$item['type']] . "('" . $item['name'] . "', null, ['class' => 'form-control'$required]) !!}"
+            '{!! Form::' . $this->typeLookup[$item['type']] . "('" . $item['name'] . "', null, ['class' => 'form-control'$required]) !!}"
         );
     }
 
     /**
      * Create a password field using the form helper.
      *
-     * @param  string  $item
+     * @param  string $item
      *
      * @return string
      */
     protected function createPasswordField($item)
     {
-        $required = ($item['required'] === true) ? ", 'required' => 'required'" : "";
+        $required = ($item['required'] === true) ? ", 'required' => 'required'" : '';
 
         return $this->wrapField(
             $item,
@@ -271,13 +277,13 @@ EOD;
     /**
      * Create a generic input field using the form helper.
      *
-     * @param  string  $item
+     * @param  string $item
      *
      * @return string
      */
     protected function createInputField($item)
     {
-        $required = ($item['required'] === true) ? ", 'required' => 'required'" : "";
+        $required = ($item['required'] === true) ? ", 'required' => 'required'" : '';
 
         return $this->wrapField(
             $item,
@@ -288,14 +294,13 @@ EOD;
     /**
      * Create a yes/no radio button group using the form helper.
      *
-     * @param  string  $item
+     * @param  string $item
      *
      * @return string
      */
     protected function createRadioField($item)
     {
-        $field =
-            <<<EOD
+        $field = <<<EOD
             <div class="checkbox">
                 <label>{!! Form::radio('%1\$s', '1') !!} Yes</label>
             </div>
@@ -307,17 +312,17 @@ EOD;
         return $this->wrapField($item, sprintf($field, $item['name']));
     }
 
-    protected  function BuildViewFile($stub,$newView,$viewName,$sVarName,$pVarName,$title,$modelName,$routeGroup,$formFieldsHtml){
+    protected function BuildViewFile($stub, $newView, $viewName, $sVarName, $pVarName, $title, $modelName, $routeGroup, $formHeadingHtml, $formBodyHtml, $formFieldsHtml)
+    {
         if (!File::copy($stub, $newView)) {
             echo "failed to copy $stub...\n";
         } else {
-            File::put($newView, str_replace('%%viewName%%', $viewName, File::get($newView)));
-            File::put($newView, str_replace('%%sVarName%%', $sVarName, File::get($newView)));
-            File::put($newView, str_replace('%%pVarName%%', $pVarName, File::get($newView)));
-            File::put($newView, str_replace('%%title%%', $title, File::get($newView)));
-            File::put($newView, str_replace('%%modelName%%', $modelName, File::get($newView)));
-            File::put($newView, str_replace('%%routeGroup%%', $routeGroup, File::get($newView)));
-            File::put($newView, str_replace('%%formFieldsHtml%%', $formFieldsHtml, File::get($newView)));
+
+            File::put($newView, str_replace(
+                ['%%viewName%%', '%%sVarName%%', '%%pVarName%%', '%%title%%', '%%modelName%%', '%%routeGroup%%', '%%formFieldsHtml%%', '%%formHeadingHtml%%', '%%formBodyHtml%%'],
+                [$viewName, $sVarName, $pVarName, $title, $modelName, $routeGroup, $formFieldsHtml, $formHeadingHtml, $formBodyHtml],
+                File::get($newView)));
+
         }
 
     }

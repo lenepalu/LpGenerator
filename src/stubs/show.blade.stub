@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h1>%%modelName%%</h1>
+    <h3>%%modelName%%</h3>
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover">
             <thead>

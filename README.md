@@ -21,14 +21,7 @@ Laravel lp Generator
     ],
     ```
 3. Install **laravelcollective/html** package for form & html.
-    * Run
-
-    ```
-    composer require laravelcollective/html
-    // For laravel 5.1
-    composer require laravelcollective/html "5.1.*"
-    ```
-    
+   
     * Add service provider & aliases to **/config/app.php** file.
     ```php
     'providers' => [
@@ -59,13 +52,13 @@ Note: You should have configured database for this operation.
 #### Crud command:
 
 ```
-php artisan lp:generate Posts --fields="title:string, body:text"
+php artisan lp:crud Posts --fields="title:string, body:text"
 ```
 
 You can also easily include route, set primary key, set views directory etc through options **--route**, **--pk**, **--view-path** as belows:
 
 ```
-php artisan lp:generate Posts --fields="title:string:required, body:text:required" --route=yes --pk=id --view-path="admin" --namespace=Admin --route-group=admin
+php artisan lp:crud Posts --fields="title:string:required, body:text:required" --route=yes --pk=id --view-path="admin" --namespace=Admin --route-group=admin
 ```
 
 Options:
@@ -150,20 +143,6 @@ These fields are supported for migration and view's form:
 * double
 * float
 
-### Custom Generator's Stub Template
-
-You can customize the generator's stub files/templates to achieve your need.
-
-1. Make sure you've published package's assets.
-    ```
-    php artisan vendor:publish
-    ```
-
-2. Turn on custom_template support on **/config/lp-generator.php**
-    ```
-    'custom_template' => true,
-    ```
-3. From the directory **/resources/lp-generator/** you can modify or customize the stub files.
 
 ##Author
 

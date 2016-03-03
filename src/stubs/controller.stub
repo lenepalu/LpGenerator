@@ -1,14 +1,13 @@
 <?php
-
 namespace DummyNamespace;
 
-use DummyRootNamespaceHttp\Requests;
+use DummyRootNamespaceHttp\Requests\{{RequestName}};
 use DummyRootNamespaceHttp\Controllers\Controller;
 
 use DummyRootNamespace{{modelName}};
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Session;
+
+
+
 
 class DummyClass extends Controller
 {
@@ -16,7 +15,7 @@ class DummyClass extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -28,7 +27,7 @@ class DummyClass extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -38,14 +37,13 @@ class DummyClass extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return Response
+     * @param {{RequestName}} $request
+     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store({{RequestName}} $request)
     {
-        {{validationRules}}
-        {{modelName}}::create($request->all());
 
-        Session::flash('flash_message', '{{modelName}} added!');
+        {{modelName}}::create($request->all());
 
         return redirect('{{routeGroup}}{{viewName}}');
     }
@@ -55,7 +53,7 @@ class DummyClass extends Controller
      *
      * @param  int  $id
      *
-     * @return Response
+     * @return  \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -69,7 +67,7 @@ class DummyClass extends Controller
      *
      * @param  int  $id
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
@@ -81,17 +79,15 @@ class DummyClass extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
-     *
-     * @return Response
+     * @param  int $id
+     * @param {{RequestName}} $request
+     * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request)
+    public function update($id, {{RequestName}} $request)
     {
-        {{validationRules}}
+
         ${{sVarName}} = {{modelName}}::findOrFail($id);
         ${{sVarName}}->update($request->all());
-
-        Session::flash('flash_message', '{{modelName}} updated!');
 
         return redirect('{{routeGroup}}{{viewName}}');
     }
@@ -101,13 +97,11 @@ class DummyClass extends Controller
      *
      * @param  int  $id
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         {{modelName}}::destroy($id);
-
-        Session::flash('flash_message', '{{modelName}} deleted!');
 
         return redirect('{{routeGroup}}{{viewName}}');
     }

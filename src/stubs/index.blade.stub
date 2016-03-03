@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h1>%%title%% <a href="{{ url('%%routeGroup%%%%viewName%%/create') }}" class="btn btn-primary pull-right btn-sm">Add New %%modelName%%</a></h1>
+    <h3>%%title%% <a href="{{ url('%%routeGroup%%%%viewName%%/create') }}" class="btn btn-primary pull-right btn-sm">Add New %%modelName%%</a></h3>
     <div class="table">
         <table class="table table-bordered table-striped table-hover">
             <thead>
@@ -12,18 +12,18 @@
             </thead>
             <tbody>
             {{-- */$x=0;/* --}}
-            @foreach($%%pVarName%% as $item)
+            @foreach($%%pVarName%% as $%%sVarName%%)
                 {{-- */$x++;/* --}}
                 <tr>
                     <td>{{ $x }}</td>
                     %%formBodyHtml%%
                     <td>
-                        <a href="{{ url('%%routeGroup%%%%viewName%%/' . $item->id . '/edit') }}">
+                        <a href="{{ url('%%routeGroup%%%%viewName%%/' . $%%sVarName%%->id . '/edit') }}">
                             <button type="submit" class="btn btn-primary btn-xs">Update</button>
                         </a> /
                         {!! Form::open([
                             'method'=>'DELETE',
-                            'url' => ['%%routeGroup%%%%viewName%%', $item->id],
+                            'url' => ['%%routeGroup%%%%viewName%%', $%%sVarName%%->id],
                             'style' => 'display:inline'
                         ]) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-xs']) !!}

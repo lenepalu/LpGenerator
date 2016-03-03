@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Created by PhpStorm.
+ * User: LenePalu
+ * Date: 2/29/16
+ * Time: 20:45
+ */
 return [
 
     'custom_template' => false,

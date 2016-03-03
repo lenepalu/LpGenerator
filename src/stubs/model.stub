@@ -19,6 +19,6 @@ class DummyClass extends Model
      *
      * @var array
      */
-    protected $fillable = {{fillable}};
+    protected $fillable = [ {{fillable}} ];
 
 }
